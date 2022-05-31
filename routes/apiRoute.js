@@ -34,7 +34,7 @@ router.get("/notes:id", (req, res) => {
 //going to create a post route so that changes made to the note taker file are applied to the database
 router.post("/notes", (req, res) => {
     //creating a variable for title and text of each note
-    let {title, text} = req.body; 
+    const {title, text} = req.body; 
     
     //creating a note variable so that when we use fs to write the into the file it will have a template
     let note = {
