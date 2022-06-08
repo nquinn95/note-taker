@@ -20,15 +20,19 @@ router.get("/notes", (req, res)=>{
 router.get("/notes:id", (req, res) => {
     let noteId = req.params.id;
 
-    fs.readFile("..db/db.json")
+    readFromFile("./db/db.json")
     .then(data => {
         data = JSON.parse(data);
         if (noteId != data){
             return res.json("No note with this Id");
         }
     })
+    .then((json) => {
+        const result = json.filter((note) => note.id === noteId);
+        return result.length > 0
+          ? res.json(result) : res.json('No notes match that ID');
 });
-
+})
 //going to create a post route so that changes made to the note taker file are applied to the database
 router.post("/notes", (req, res) => {
     //creating a variable for title and text of each note
@@ -40,27 +44,24 @@ router.post("/notes", (req, res) => {
         text,
         id: uuidv4()
     }
-    
+
+
+
+    //used read and append to json file write the saved note to the json file
     if(note){
-        readFromFile(__dirname, "../db/db.json"), 'utf-8', (err, data) =>{
+        readAndAppend(note, "./db/db.json"), 'utf-8', (err, data) =>{
             noteData = JSON.parse(data);
 
             noteData.push(note);
             console.log(noteData);
 
             
-            writeToFile(__dirname, "../db/db.json"), JSON.stringify(noteData), (err) =>{
+            writeToFile(__dirname, "./db/db.json"), JSON.stringify(noteData), (err) =>{
                 if (err) throw (err);
             }   
         }
         
     }
-
-    
-
 });
-
-
-
 
 module.exports = router; 
